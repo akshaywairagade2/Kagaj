@@ -3,6 +3,8 @@ const app=express();
 const mongoose=require('mongoose');
 const env=require('dotenv');
 
+const authRoutes=require('./routes/auth')
+
 env.config();
 
 mongoose.connect(
@@ -15,6 +17,9 @@ mongoose.connect(
 ).then(()=>{
     console.log(`Database Connected`);
 });
+
+app.use(express.json());
+app.use('/api',authRoutes);
 
 app.listen(process.env.PORT_NUMBER,()=>{
     console.log("Connected");
