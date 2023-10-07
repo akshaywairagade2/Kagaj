@@ -10,9 +10,9 @@ const Homepage = () => {
     const user = userInfo ? userInfo.User : null
     const path = window.location.pathname;
 
-    useEffect(() => {
-        if (!user) navigate('/login')
-    }, [user])
+    // useEffect(() => {
+    //     if (!user) navigate('/login')
+    // }, [user])
 
     return (
         <>
