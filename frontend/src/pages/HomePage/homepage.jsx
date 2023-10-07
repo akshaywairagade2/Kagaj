@@ -4,6 +4,11 @@ import Header from "../../Header/Header";
 import { useNavigate } from 'react-router-dom';
 import Footer from "../../Footer/footer";
 
+import {
+    Stack,
+    Select
+} from '@chakra-ui/react'
+
 const Homepage = () => {
     const navigate = useNavigate();
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));

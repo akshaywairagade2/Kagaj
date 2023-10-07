@@ -12,14 +12,22 @@ import logo from "../logo.svg"
 
 const Footer = () => {
     return (
-        <Box bg='gray' color='white'>
+        <Box
+            bg='gray'
+            color='white'
+            position={"fixed"}
+            bottom={0}
+            width="100%"
+        >
             <Container
                 as={Stack}
                 // maxW={'6xl'}
                 // py={4}
                 // spacing={4}
                 justify={'center'}
-                align={'center'}>
+                align={'center'}
+
+            >
 
                 <Stack direction={'row'} spacing={6}>
                     <Image
@@ -43,7 +51,7 @@ const Footer = () => {
                 </Stack>
                 <Text paddingBottom={2}> © 2023 Kagaj. All rights reserved</Text>
             </Container>
-        </Box>
+        </Box >
     )
 }
 

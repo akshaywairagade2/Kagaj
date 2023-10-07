@@ -36,7 +36,6 @@ const Header = () => {
     const user = userInfo ? userInfo.User : null
     const path = window.location.pathname;
 
-    console.log(search)
 
 
     const logoutHandler = () => {
@@ -45,39 +44,74 @@ const Header = () => {
     };
 
     return (
-        <>
-            <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-                <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-                    <HStack spacing={8} alignItems={'center'}>
 
-                        <Image
-                            boxSize='80px'
-                            src={logo}
-                            alt='Logo'
-                        />
+        <Box
+            bg={useColorModeValue('gray.100', 'gray.900')}
+            px={4}
+            position={"sticky"}
+            top={0}
+            width="100%"
+        >
+            <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+                <HStack spacing={8} alignItems={'center'}>
 
-                        <Stack direction={'row'} spacing={6}>
-                            <Box as="a" href={'/'}
-                            //  _hover={{
-                            //     background: "white",
-                            // }}
-                            >
-                                Home
-                            </Box>
-                            {
-                                user ? (
-                                    <Box as="a" href={'/requests'}
-                                    // _hover={{ background: "white" }}
-                                    >
-                                        Requests
-                                    </Box>
-                                ) : null
-                            }
+                    <Image
+                        boxSize='80px'
+                        src={logo}
+                        alt='Logo'
+                    />
 
-                        </Stack >
+                    <Stack direction={'row'} spacing={6}>
+                        <Box as="a" href={'/'}
+                            color={path == "/" ? "green" : null}
+                            _hover={{
+                                color: "white",
+                                borderRadius: '5',
+                                backgroundColor: "gray"
+                            }}
+                            padding={2}
+                        >
+                            Home
+                        </Box>
+                        {
+                            user ? (
+                                <Box as="a" href={'/requests'}
+                                    _hover={{
+                                        color: "white",
+                                        borderRadius: '5',
+                                        backgroundColor: "gray"
+                                    }}
+                                    color={path == "/requests" ? "green" : null}
+                                    padding={2}
+                                >
+                                    Requests
+                                </Box>
+                            ) : null
+                        }
+                        {
+                            user ? (
+                                <Box as="a" href={'/search_by_user'}
+                                    _hover={{
+                                        color: "white",
+                                        borderRadius: '5',
+                                        backgroundColor: "gray"
+                                    }}
+                                    color={path == "/search_by_user" ? "green" : null}
+                                    padding={2}
+                                >
+                                    Search_By_Users
+                                </Box>
+                            ) : null
+                        }
 
-                    </HStack>
-                    {
+                    </Stack >
+
+                </HStack>
+
+
+
+                {/* -- Serach Bar -- */}
+                {/* {
                         user ? (
                             <InputGroup borderRadius={20} width={600} backgroundColor="white" boxShadow="1px 1px black"   >
                                 <InputLeftElement pointerEvents='none'>
@@ -86,63 +120,44 @@ const Header = () => {
                                 <Input type='text' placeholder='Search By User' borderRadius={20} />
                             </InputGroup>
                         ) : null
-                    }
-                    <HStack alignItems={'end'}>
-                        {
-                            user ?
-                                <Menu>
-                                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                                        <Avatar
-                                            size="sm"
-                                            cursor="pointer"
-                                            name={user.firstName}
-                                        />
-                                    </MenuButton>
-                                    <MenuList>
-                                        <MenuItem size='sm' onClick={logoutHandler}>Logout</MenuItem>
-                                    </MenuList>
-                                </Menu> :
-                                (
-                                    path == '/login' || path == '/signup' ?
-                                        null
-                                        :
-                                        <Menu>
-                                            <Button colorScheme='black' size='sm' variant='outline' onClick={() => navigate('/login')}>
-                                                Login
-                                            </Button>
-                                        </Menu>
-                                )
-                        }
-                    </HStack>
+                    } */}
+                {/* -- Serach Bar -- */}
 
-                </Flex >
-            </Box >
-        </>
+
+
+                <HStack alignItems={'end'}>
+                    {
+                        user ?
+                            <Menu>
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                    <Avatar
+                                        size="sm"
+                                        cursor="pointer"
+                                        name={user.firstName}
+                                    />
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem size='sm' onClick={logoutHandler}>Logout</MenuItem>
+                                </MenuList>
+                            </Menu> :
+                            (
+                                path == '/login' || path == '/signup' ?
+                                    null
+                                    :
+                                    <Menu>
+                                        <Button colorScheme='black' size='sm' variant='outline' onClick={() => navigate('/login')}>
+                                            Login
+                                        </Button>
+                                    </Menu>
+                            )
+                    }
+                </HStack>
+
+            </Flex >
+        </Box >
+
     )
 }
 
 export default Header;
 
-{/* <InputGroup width={800} backgroundColor="white" borderColor="black">
-                                <InputLeftAddon pointerEvents="none" children='+234' />
-
-                                <Input type='text' placeholder='Search By User' />
-                            </InputGroup> */}
-
-{/* <Box as="a" href={'/about'} _hover={{
-                                background: "white",
-                            }}>
-                                Requests
-                            </Box>
-                            <Box as="a" _hover={{
-                                background: "white",
-                            }}>
-                                <Input placeholder='Search By User' size='sm' />
-
-                            </Box> : null */}
-
-
-{/* <Box >
-                                <Input width="auto" variant='flushed' placeholder='Search By User' alignItems={'center'} size='md' borderRadius={4} paddingLeft={2} onChange={(e) => { setSearch(e.target.value) }} backgroundColor="white" color="black" />
-                                {/* <Input width="auto" variant='flushed' placeholder='Search By User' alignItems={'center'} size='md' borderRadius={4} borderColor="black" borderWidth={1} paddingLeft={2} onChange={(e) => { setSearch(e.target.value) }} backgroundColor="white" color="black" /> */}
-{/* </Box> */ } 
