@@ -15,7 +15,7 @@ const Footer = () => {
         <Box
             bg='gray'
             color='white'
-            position={"fixed"}
+            position={"auto"}
             bottom={0}
             width="100%"
         >

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler");
 const jwt = require('jsonwebtoken')
+const nodemailer = require("nodemailer");
 
 
 exports.signup = async (req, res) => {
@@ -28,6 +29,7 @@ exports.signup = async (req, res) => {
     });
 
     if (user) {
+
         return res.status(201).json({
             msg: "User Created Successfully",
             User: {
@@ -43,6 +45,43 @@ exports.signup = async (req, res) => {
         return res.status(400).send("User not found");
     }
 };
+
+
+exports.login = async (req, res) => {
+    const { emailId, password } = req.body;
+
+    if (!emailId || !password) {
+        return res.status(400).json({ msg: "Please Enter all the Fields" });
+    }
+
+    const user = await User.findOne({ emailId });
+
+    if (user) {
+        const isValid = await bcrypt.compare(password, user.hashPassword)
+
+
+        if (isValid) {
+            return res.status(201).json({
+                msg: "You Loggedin Successfully",
+                User: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    emailId: user.emailId,
+                    isAdmin: user.isAdmin,
+                    pic: user.pic,
+                }
+            });
+        }
+        else {
+            return res.status(400).json({ msg: "Invalid mail or password" });
+        }
+
+    } else {
+        return res.status(400).json({ msg: "User Not Found  " });
+    }
+};
+
 
 
 

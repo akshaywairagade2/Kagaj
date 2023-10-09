@@ -32,6 +32,7 @@ const Login = () => {
 
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    console.log(userInfo)
     const user = userInfo ? userInfo.User : null
     const path = window.location.pathname;
 
@@ -69,6 +70,8 @@ const Login = () => {
                 config
             );
 
+            console.log(data, "hehe")
+
             toast({
                 title: "Login Successful",
                 status: "success",
@@ -78,8 +81,6 @@ const Login = () => {
             });
             localStorage.setItem("userInfo", JSON.stringify(data));
             navigate('/')
-
-
 
         } catch (error) {
             toast({
@@ -93,6 +94,8 @@ const Login = () => {
 
         }
     };
+
+
 
     return (
         <>

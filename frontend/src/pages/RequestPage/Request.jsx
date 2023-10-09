@@ -25,6 +25,7 @@ const Request = () => {
     const [total_done, setTotal_Done] = useState(false);
     const [total_reject, setTotal_Rejects] = useState(false);
     const [isTableVisible, setIsTableVisible] = useState(false);
+    const data2 = [1, 2, 3, 4]
 
 
 
@@ -56,33 +57,18 @@ const Request = () => {
                             </Thead>
                             <Tbody>
 
-                                <Tr>
-                                    <Td>1</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Input type="file" padding={2} width="50%"></Input></Td>
-                                    <Td><Button>submit</Button></Td>
-                                    <Td><Button>Reject</Button></Td>
-                                </Tr>
-                                <Tr>
-                                    <Td>2</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Input type="file" padding={2} width="50%"></Input></Td>
-                                    <Td><Button>submit</Button></Td>
-                                    <Td><Button>Reject</Button></Td>
-                                </Tr>
-                                <Tr>
-                                    <Td>3</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Input type="file" padding={2} width="50%"></Input></Td>
-                                    <Td><Button>submit</Button></Td>
-                                    <Td><Button>Reject</Button></Td>
-                                </Tr>
+                                {data2.map((u) => (
+                                    <Tr>
+                                        <Td>1</Td>
+                                        <Td>abc@gmail.com</Td>
+                                        <Td>abc</Td>
+                                        <Td>abc_document</Td>
+                                        <Td><Input type="file" padding={2} width="50%"></Input></Td>
+                                        <Td><Button>submit</Button></Td>
+                                        <Td><Button>Reject</Button></Td>
+                                    </Tr>
+
+                                ))}
 
 
                             </Tbody>
@@ -107,31 +93,15 @@ const Request = () => {
                             </Thead>
                             <Tbody>
 
-                                <Tr padding={2}>
-                                    <Td>1</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
-
-                                </Tr>
-                                <br />
-                                <Tr>
-                                    <Td>2</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
-                                </Tr>
-                                <br />
-                                <Tr>
-                                    <Td>3</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
-
-                                </Tr>
+                                {data2.map((u) => (
+                                    <Tr>
+                                        <Td>2</Td>
+                                        <Td>abc@gmail.com</Td>
+                                        <Td>abc</Td>
+                                        <Td>abc_document</Td>
+                                        <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"35%"}>Submitted</Box></Td>
+                                    </Tr>
+                                ))}
 
 
                             </Tbody>
@@ -157,31 +127,18 @@ const Request = () => {
                             </Thead>
                             <Tbody>
 
-                                <Tr padding={2}>
-                                    <Td>1</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
 
-                                </Tr>
-                                <br />
-                                <Tr>
-                                    <Td>2</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
-                                </Tr>
-                                <br />
-                                <Tr>
-                                    <Td>3</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
+                                {data2.map((u) => (
+                                    <Tr>
+                                        <Td>2</Td>
+                                        <Td>abc@gmail.com</Td>
+                                        <Td>abc</Td>
+                                        <Td>abc_document</Td>
+                                        <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
+                                    </Tr>
+                                ))}
 
-                                </Tr>
+
 
 
                             </Tbody>
@@ -189,8 +146,6 @@ const Request = () => {
                         </Table>
                     </TableContainer> : null
                 }
-
-
 
             </Stack>
 

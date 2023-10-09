@@ -55,10 +55,9 @@ const SearchByUser = () => {
     return (
         <Box
             padding={10}
-            width="90%"
+            width="100%"
             maxH="90%"
             overflowY={"auto"}
-            paddingLeft={25}
         >
 
             <Box paddingBottom={2} >
@@ -99,25 +98,25 @@ const SearchByUser = () => {
                                     <Td>1</Td>
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
+                                    <Td> abc_document</Td>
+                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
 
                                 </Tr>
-                                <br />
+
                                 <Tr>
                                     <Td>2</Td>
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
                                     <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
+                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
                                 </Tr>
-                                <br />
+
                                 <Tr>
                                     <Td>3</Td>
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
                                     <Td>abc_document</Td>
-                                    <Td backgroundColor={"green.200"} width={"10"} borderRadius={'10'}>Submitted</Td>
+                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
 
                                 </Tr>
 
@@ -152,24 +151,24 @@ const SearchByUser = () => {
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
                                     <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
+                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
 
                                 </Tr>
-                                <br />
+
                                 <Tr>
                                     <Td>2</Td>
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
                                     <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
+                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
                                 </Tr>
-                                <br />
+
                                 <Tr>
                                     <Td>3</Td>
                                     <Td>abc@gmail.com</Td>
                                     <Td>abc</Td>
                                     <Td>abc_document</Td>
-                                    <Td backgroundColor={"red.200"} width={"10"} borderRadius={'10'}>Rejected</Td>
+                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
 
                                 </Tr>
 
