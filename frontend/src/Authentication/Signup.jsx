@@ -63,7 +63,7 @@ const SignUp = () => {
             };
 
             const { data } = await axios.post(
-                "http://localhost:5000/api/signup",
+                "http://localhost:5000/api/auth/signup",
                 {
                     "firstName": firstName,
                     "lastName": lastName,
@@ -83,7 +83,7 @@ const SignUp = () => {
             });
 
             localStorage.setItem("userInfo", JSON.stringify(data));
-            navigate('/');
+            setTimeout(() => { navigate("/") }, 500);
 
         } catch (error) {
 

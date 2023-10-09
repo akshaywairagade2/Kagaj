@@ -32,7 +32,6 @@ const Login = () => {
 
 
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    console.log(userInfo)
     const user = userInfo ? userInfo.User : null
     const path = window.location.pathname;
 
@@ -62,7 +61,7 @@ const Login = () => {
             };
 
             const { data } = await axios.post(
-                "http://localhost:5000/api/login",
+                "http://localhost:5000/api/auth/login",
                 {
                     "emailId": email,
                     "password": password,
@@ -70,7 +69,7 @@ const Login = () => {
                 config
             );
 
-            console.log(data, "hehe")
+
 
             toast({
                 title: "Login Successful",
@@ -80,7 +79,7 @@ const Login = () => {
                 position: "bottom",
             });
             localStorage.setItem("userInfo", JSON.stringify(data));
-            navigate('/')
+            setTimeout(() => { navigate("/") }, 500);
 
         } catch (error) {
             toast({

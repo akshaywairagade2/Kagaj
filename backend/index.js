@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const env = require('dotenv');
 var cors = require('cors');
 const authRoutes = require('./routes/auth')
+const issueRoutes = require('./routes/issue')
 
 env.config();
 app.use(cors());
@@ -20,8 +21,11 @@ mongoose.connect(
 });
 
 app.use(express.json());
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/issue', issueRoutes);
 
 app.listen(process.env.PORT_NUMBER, () => {
     console.log("Connected");
 })
+
+

@@ -1,4 +1,5 @@
-import react, { useState } from "react"
+import react, { useEffect, useState } from "react"
+import axios from "axios";
 import {
     TableContainer,
     Box,
@@ -13,10 +14,11 @@ import {
     Tbody,
     Tr,
     Button,
-    Input
+    Input,
+    effect
 
 } from '@chakra-ui/react'
-
+import { useToast } from "@chakra-ui/react";
 
 
 const Request = () => {
@@ -24,8 +26,55 @@ const Request = () => {
     const [total_requests, setTotal_Requests] = useState(false);
     const [total_done, setTotal_Done] = useState(false);
     const [total_reject, setTotal_Rejects] = useState(false);
-    const [isTableVisible, setIsTableVisible] = useState(false);
+    // const [isTableVisible, setIsTableVisible] = useState(false);
+    const [data, setData] = useState([]);
     const data2 = [1, 2, 3, 4]
+    const toast = useToast();
+
+
+    const FetchAllRequets = async () => {
+
+        try {
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                },
+            };
+
+            const data = await axios.get(
+                "http://localhost:5000/api/issue/getall", config
+            );
+            const data2 = JSON.parse(data)
+
+            console.log(data2)
+
+            // toast({
+            //     title: "Login Successful",
+            //     status: "success",
+            //     duration: 5000,
+            //     isClosable: true,
+            //     position: "bottom",
+            // });
+            // localStorage.setItem("userInfo", JSON.stringify(data));
+            // setTimeout(() => { navigate("/") }, 500);
+
+        } catch (error) {
+            toast({
+                title: "Error Occured!",
+                description: error.response.data.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+        }
+    }
+
+
+    useEffect(() => {
+        FetchAllRequets()
+    }, [])
 
 
 

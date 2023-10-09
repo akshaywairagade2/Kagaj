@@ -48,7 +48,7 @@ const Header = () => {
         <Box
             bg={useColorModeValue('gray.100', 'gray.900')}
             px={4}
-            position={"sticky"}
+            position={"auto"}
             top={0}
             width="100%"
         >
@@ -100,6 +100,21 @@ const Header = () => {
                                     padding={2}
                                 >
                                     Search_By_Users
+                                </Box>
+                            ) : null
+                        }
+                        {
+                            user ? (
+                                <Box as="a" href={'/issue'}
+                                    _hover={{
+                                        color: "white",
+                                        borderRadius: '5',
+                                        backgroundColor: "gray"
+                                    }}
+                                    color={path == "/issue" ? "green" : null}
+                                    padding={2}
+                                >
+                                    CreateIssue
                                 </Box>
                             ) : null
                         }
