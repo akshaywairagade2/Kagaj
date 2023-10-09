@@ -1,4 +1,5 @@
 import react, { useState } from "react"
+import axios from "axios";
 import {
     TableContainer,
     Box,
@@ -16,7 +17,8 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    InputRightAddon
+    InputRightAddon,
+    Link
 
 
 } from '@chakra-ui/react'
@@ -27,13 +29,25 @@ import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 
 const SearchByUser = () => {
 
+    const [total_requests, setTotal_Requests] = useState(false);
     const [search, setSearch] = useState("");
     const [total_done, setTotal_Done] = useState(false);
     const [total_reject, setTotal_Rejects] = useState(false);
-    const [data, setData] = useState(false);
+    const [data, setData] = useState([]);
+    const [Issues, setIssues] = useState([]);
     const toast = useToast();
 
-    const SearchUser = (e) => {
+
+    const HandleSearch = (e) => {
+        setSearch(e.target.value);
+        setIssues([])
+    };
+
+
+
+    const SearchUser = async (e) => {
+
+        e.preventDefault();
 
         setTotal_Rejects(false);
         setTotal_Done(false);
@@ -47,11 +61,40 @@ const SearchByUser = () => {
                 position: "bottom",
             });
             return;
+        } else {
+            try {
+                const config = {
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                };
+
+                const Data = await axios.post(
+                    "http://localhost:5000/api/issue/getallbyemail", {
+                    emailid: search
+                },
+                    config
+                );
+
+                if (Data) setIssues(Data.data.Issue)
+                else setIssues([])
+
+            } catch (error) {
+                toast({
+                    title: "Error Occured!",
+                    description: error.response.data.message,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "bottom",
+                });
+
+            }
         }
-        setData(true);
+
     }
 
-
+    console.log(Issues, "Issues")
     return (
         <Box
             padding={10}
@@ -66,122 +109,134 @@ const SearchByUser = () => {
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon color='gray.300' />
                     </InputLeftElement>
-                    <Input type='text' value={search} placeholder='Search By User Email Id' borderRadius={20} onChange={(e) => { setSearch(e.target.value) }} />
-                    <InputRightAddon><Button width="100%" onClick={SearchUser}>Search</Button></InputRightAddon>
+                    <Input type='text' value={search} placeholder='Search By User Email Id' borderRadius={20} onChange={(e) => { HandleSearch(e) }} />
+                    <InputRightAddon><Button width="100%" onClick={(e) => { SearchUser(e) }}>Search</Button></InputRightAddon>
                 </InputGroup>
 
             </Box>
+            {
+                Issues.length != [] ?
+                    <Stack spacing={3}>
 
-            <Stack spacing={3}>
+                        <Button onClick={(e) => { setTotal_Requests(!total_requests) }} bg={total_requests ? "gray.300" : null}>Total Pending</Button>
+                        {total_requests ?
+                            <TableContainer>
+                                <Table variant='simple'>
 
-                {
-                    data ? <Button onClick={(e) => { setTotal_Done(!total_done) }} bg={total_done ? "gray.300" : null} > Total Done</Button> : null
-                }
+                                    <Thead>
+                                        <Tr>
+                                            <Th>Index</Th>
+                                            <Th>Email Id</Th>
+                                            <Th>Name</Th>
+                                            <Th>Document Requested</Th>
+                                            <Th>Status</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>{
+                                        Issues.map((issue, index) => (
+                                            (issue.status == "pending" ?
+                                                <Tr>
+                                                    <Td>{index + 1}</Td>
+                                                    <Td>{issue.emailId}</Td>
+                                                    <Td>{issue.username}</Td>
+                                                    <Td>{issue.filename}</Td>
+                                                    <Td><Box backgroundColor={"yellow.200"} padding={2} borderRadius={4} w={"40%"}>Pending</Box></Td>
+                                                </Tr> : null
+                                            )
+                                        ))
+                                    }
 
-                {total_done ?
-                    <TableContainer>
-                        <Table variant={'simple'}>
+                                    </Tbody>
 
-                            <Thead>
-                                <Tr>
-                                    <Th>Index</Th>
-                                    <Th>Email Id</Th>
-                                    <Th>Name</Th>
-                                    <Th>Document Requested</Th>
-                                    <Th>Status</Th>
-
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-
-                                <Tr padding={2}>
-                                    <Td>1</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td> abc_document</Td>
-                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
-
-                                </Tr>
-
-                                <Tr>
-                                    <Td>2</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
-                                </Tr>
-
-                                <Tr>
-                                    <Td>3</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"36%"}>Submitted</Box></Td>
-
-                                </Tr>
-
-
-                            </Tbody>
-
-                        </Table>
-                    </TableContainer> : null
-                }
-
-                {
-                    data ? <Button onClick={(e) => { setTotal_Rejects(!total_reject) }} bg={total_reject ? "gray.300" : null} > Total Reject</Button> : null
-                }
-                {total_reject ?
-                    <TableContainer>
-                        <Table variant={'simple'}>
-
-                            <Thead>
-                                <Tr>
-                                    <Th>Index</Th>
-                                    <Th>Email Id</Th>
-                                    <Th>Name</Th>
-                                    <Th>Document Requested</Th>
-                                    <Th>Status</Th>
-
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-
-                                <Tr padding={2}>
-                                    <Td>1</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
-
-                                </Tr>
-
-                                <Tr>
-                                    <Td>2</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
-                                </Tr>
-
-                                <Tr>
-                                    <Td>3</Td>
-                                    <Td>abc@gmail.com</Td>
-                                    <Td>abc</Td>
-                                    <Td>abc_document</Td>
-                                    <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
-
-                                </Tr>
-
-
-                            </Tbody>
-
-                        </Table>
-                    </TableContainer> : null
-                }
+                                </Table>
+                            </TableContainer> : null
+                        }
 
 
 
-            </Stack>
+                        <Button onClick={(e) => { setTotal_Done(!total_done) }} bg={total_done ? "gray.300" : null} > Total Done</Button>
+                        {total_done ?
+                            <TableContainer>
+                                <Table variant={'simple'}>
+
+                                    <Thead>
+                                        <Tr>
+                                            <Th>Index</Th>
+                                            <Th>Email Id</Th>
+                                            <Th>Name</Th>
+                                            <Th>Document Requested</Th>
+                                            <Th>Status</Th>
+
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+
+                                        {Issues.map((issue, index) => (
+                                            (issue.status == "Submitted" ?
+                                                <Tr>
+                                                    <Td>{index + 1}</Td>
+                                                    <Td>{issue.emailId}</Td>
+                                                    <Td>{issue.username}</Td>
+                                                    <Td>
+                                                        <Link href={issue.link} isExternal>
+                                                            {issue.filename}
+                                                        </Link>
+                                                    </Td>
+                                                    <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"40%"}>Submitted</Box></Td>
+                                                </Tr> : null
+                                            )
+                                        ))}
+
+
+                                    </Tbody>
+
+                                </Table>
+                            </TableContainer> : null
+                        }
+
+                        <Button onClick={(e) => { setTotal_Rejects(!total_reject) }} bg={total_reject ? "gray.300" : null}>Total Rejected </Button>
+                        {total_reject ?
+                            <TableContainer>
+                                <Table variant={'simple'}>
+
+                                    <Thead>
+                                        <Tr>
+                                            <Th>Index</Th>
+                                            <Th>Email Id</Th>
+                                            <Th>Name</Th>
+                                            <Th>Document Requested</Th>
+                                            <Th>Status</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+
+
+                                        {Issues.map((issue, index) => (
+                                            (
+                                                issue.status == "Rejected" ?
+                                                    <Tr>
+                                                        <Td>{index + 1}</Td>
+                                                        <Td>{issue.emailId}</Td>
+                                                        <Td>{issue.username}</Td>
+                                                        <Td>{issue.filename}</Td>
+                                                        <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
+                                                    </Tr> : null
+                                            )
+                                        ))}
+
+                                    </Tbody>
+
+                                </Table>
+                            </TableContainer> : null
+                        }
+
+
+
+                    </Stack>
+                    : "No Result Found!"
+            }
+
+
 
         </Box >
     )

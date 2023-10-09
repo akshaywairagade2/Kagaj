@@ -15,10 +15,14 @@ import {
     Tr,
     Button,
     Input,
-    effect
+    Link,
 
 } from '@chakra-ui/react'
 import { useToast } from "@chakra-ui/react";
+import storage from "../Firebase/firebase.js"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { v4 } from "uuid"
+
 
 
 const Request = () => {
@@ -26,10 +30,113 @@ const Request = () => {
     const [total_requests, setTotal_Requests] = useState(false);
     const [total_done, setTotal_Done] = useState(false);
     const [total_reject, setTotal_Rejects] = useState(false);
-    // const [isTableVisible, setIsTableVisible] = useState(false);
-    const [data, setData] = useState([]);
-    const data2 = [1, 2, 3, 4]
+    const [Issues, setIssues] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [selectedid, setSelectedId] = useState(null);
+    const [count, setCount] = useState(0);
     const toast = useToast();
+
+
+
+
+    const handleFileChange = (event, id) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+        setSelectedId(id);
+    };
+
+    const handleUpload = async () => {
+
+        if (selectedFile == null) {
+            toast({
+                title: "Please Select File",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+            return;
+        }
+        if (selectedFile.type === "application/pdf") {
+            const path = selectedFile.name + v4();
+            const url = `https://firebasestorage.googleapis.com/v0/b/kagaj-fe973.appspot.com/o/files%2F${path}?alt=media&token=7c3a0243-ebb5-40f6-a6f7-22ccaf96bf27&_gl=1*1jftra6*_ga*MTY1ODQxMTgxMy4xNjk2ODg1Nzc2*_ga_CW55HF8NVT*MTY5Njg4NTc3Ni4xLjEuMTY5Njg4ODYyNi41MS4wLjA.`
+            const fileRef = ref(storage, `files/${path}`);
+            uploadBytes(fileRef, selectedFile).then(() => {
+                alert("File Uploaded");
+            })
+
+            setPdfUrl(url);
+
+        } else {
+            toast({
+                title: "Only Pdf Accepted",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+            return;
+        }
+    };
+
+    const AppendUrl = async () => {
+        if (!pdfUrl || !selectedid) {
+            toast({
+                title: "Please a file",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+            return;
+        }
+
+        try {
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                },
+            };
+
+            const { data } = await axios.post(
+                "http://localhost:5000/api/issue/submitted",
+                {
+                    "url": pdfUrl,
+                    "id": selectedid,
+                },
+                config
+            );
+            setCount(count + 1);
+
+            toast({
+                title: "File Submitted Successful",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+
+        } catch (error) {
+            toast({
+                title: "Error Occured!",
+                description: error.response.data.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+        }
+    }
+
+    useEffect(() => {
+        if (pdfUrl && selectedid) {
+            AppendUrl();
+        }
+    }, [pdfUrl])
 
 
     const FetchAllRequets = async () => {
@@ -41,22 +148,14 @@ const Request = () => {
                 },
             };
 
-            const data = await axios.get(
-                "http://localhost:5000/api/issue/getall", config
+            const Data = await axios.get(
+                "http://localhost:5000/api/issue/getall",
+                config
             );
-            const data2 = JSON.parse(data)
+            setCount(count + 1);
 
-            console.log(data2)
-
-            // toast({
-            //     title: "Login Successful",
-            //     status: "success",
-            //     duration: 5000,
-            //     isClosable: true,
-            //     position: "bottom",
-            // });
-            // localStorage.setItem("userInfo", JSON.stringify(data));
-            // setTimeout(() => { navigate("/") }, 500);
+            if (Data) setIssues(Data.data.Issue)
+            else setIssues([])
 
         } catch (error) {
             toast({
@@ -74,7 +173,46 @@ const Request = () => {
 
     useEffect(() => {
         FetchAllRequets()
-    }, [])
+    }, [count])
+
+    const RejectIssue = async (id) => {
+        try {
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                },
+            };
+
+            const { data } = await axios.post(
+                "http://localhost:5000/api/issue/rejected",
+                {
+                    "id": id,
+                },
+                config
+            );
+            setCount(count + 1);
+            toast({
+                title: "File Rejected Successful",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+
+        } catch (error) {
+            toast({
+                title: "Error Occured!",
+                description: error.response.data.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+
+        }
+    }
+    console.log(Issues)
 
 
 
@@ -87,6 +225,7 @@ const Request = () => {
             overflowY={"auto"}
         >
             <Stack spacing={3}>
+
 
                 <Button onClick={(e) => { setTotal_Requests(!total_requests) }} bg={total_requests ? "gray.300" : null}>Total Requests</Button>
                 {total_requests ?
@@ -104,27 +243,30 @@ const Request = () => {
                                     <Th>Reject</Th>
                                 </Tr>
                             </Thead>
-                            <Tbody>
-
-                                {data2.map((u) => (
-                                    <Tr>
-                                        <Td>1</Td>
-                                        <Td>abc@gmail.com</Td>
-                                        <Td>abc</Td>
-                                        <Td>abc_document</Td>
-                                        <Td><Input type="file" padding={2} width="50%"></Input></Td>
-                                        <Td><Button>submit</Button></Td>
-                                        <Td><Button>Reject</Button></Td>
-                                    </Tr>
-
-                                ))}
-
+                            <Tbody>{
+                                Issues.map((issue, index) => (
+                                    (issue.status == "pending" ?
+                                        <Tr>
+                                            <Td>{index + 1}</Td>
+                                            <Td>{issue.emailId}</Td>
+                                            <Td>{issue.username}</Td>
+                                            <Td>{issue.filename}</Td>
+                                            <Td><Input type="file" accept=".pdf" padding={2} width="60%" onChange={(e) => { handleFileChange(e, issue._id) }}></Input></Td>
+                                            <Td><Button onClick={handleUpload}>submit</Button></Td>
+                                            <Td><Button onClick={() => { RejectIssue(issue._id) }}>Reject</Button></Td>
+                                        </Tr> : null
+                                    )
+                                ))
+                            }
 
                             </Tbody>
 
                         </Table>
                     </TableContainer> : null
                 }
+
+
+
                 <Button onClick={(e) => { setTotal_Done(!total_done) }} bg={total_done ? "gray.300" : null} > Total Done</Button>
                 {total_done ?
                     <TableContainer>
@@ -142,14 +284,20 @@ const Request = () => {
                             </Thead>
                             <Tbody>
 
-                                {data2.map((u) => (
-                                    <Tr>
-                                        <Td>2</Td>
-                                        <Td>abc@gmail.com</Td>
-                                        <Td>abc</Td>
-                                        <Td>abc_document</Td>
-                                        <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"35%"}>Submitted</Box></Td>
-                                    </Tr>
+                                {Issues.map((issue, index) => (
+                                    (issue.status == "Submitted" ?
+                                        <Tr>
+                                            <Td>{index + 1}</Td>
+                                            <Td>{issue.emailId}</Td>
+                                            <Td>{issue.username}</Td>
+                                            <Td>
+                                                <Link href={issue.link} isExternal>
+                                                    {issue.filename}
+                                                </Link>
+                                            </Td>
+                                            <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"40%"}>Submitted</Box></Td>
+                                        </Tr> : null
+                                    )
                                 ))}
 
 
@@ -171,24 +319,23 @@ const Request = () => {
                                     <Th>Name</Th>
                                     <Th>Document Requested</Th>
                                     <Th>Status</Th>
-
                                 </Tr>
                             </Thead>
                             <Tbody>
 
 
-                                {data2.map((u) => (
-                                    <Tr>
-                                        <Td>2</Td>
-                                        <Td>abc@gmail.com</Td>
-                                        <Td>abc</Td>
-                                        <Td>abc_document</Td>
-                                        <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
-                                    </Tr>
+                                {Issues.map((issue, index) => (
+                                    (
+                                        issue.status == "Rejected" ?
+                                            <Tr>
+                                                <Td>{index + 1}</Td>
+                                                <Td>{issue.emailId}</Td>
+                                                <Td>{issue.username}</Td>
+                                                <Td>{issue.filename}</Td>
+                                                <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
+                                            </Tr> : null
+                                    )
                                 ))}
-
-
-
 
                             </Tbody>
 

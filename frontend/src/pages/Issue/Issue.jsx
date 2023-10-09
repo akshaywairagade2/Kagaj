@@ -16,7 +16,6 @@ const Issue = () => {
     const navigate = useNavigate();
     const toast = useToast();
 
-    console.log(username, email, filename, description)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,7 +44,9 @@ const Issue = () => {
                     "username": username,
                     "emailId": email,
                     "filename": filename,
-                    "description": description
+                    "description": description,
+                    "status": "pending",
+                    'link': ''
                 },
                 config
             );

@@ -28,9 +28,14 @@ const IssueSchema = new mongoose.Schema({
         trim: true,
         min: 2,
         max: 100,
-    }, status: {
-
-    }
+    },
+    status: {
+        type: String,
+        required: true,
+    },
+    link: {
+        type: String,
+    },
 }, { timestaps: true })
 
 
