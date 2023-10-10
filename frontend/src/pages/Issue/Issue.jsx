@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-    Box, Input, Textarea, Button, FormControl, FormLabel, VStack, ChakraProvider, useStatStyles
+    Box, Input, Textarea, Button, FormControl, FormLabel, VStack, ChakraProvider, useStatStyles, Stack, Flex, useColorModeValue, Heading, InputGroup
 } from '@chakra-ui/react'
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
@@ -77,38 +77,51 @@ const Issue = () => {
         }
     };
 
+
     return (
+
         <ChakraProvider>
-            <Box p={4} maxWidth="400px" margin="auto" positon="auto">
-                <form onSubmit={handleSubmit}>
-                    <VStack spacing={4}>
-                        <FormControl isRequired>
-                            <FormLabel>Username</FormLabel>
-                            <Input type="text" placeholder="Enter your username" onChange={(e) => { setUserName(e.target.value) }} />
-                        </FormControl>
+            <Box spacing={10} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                <Stack align={'center'} paddingBottom={4}>
+                    <Heading fontSize={'4xl'}>Create an Issue</Heading>
+                </Stack>
+                <Box p={8} maxWidth="400px" margin="auto" positon="auto"
+                    rounded={'lg'}
+                    bg={useColorModeValue('white', 'gray.700')}
+                    paddingTop={15}
+                    border="1px solid"
+                    boxShadow="5px 10px 18px #888888"
+                >
+                    <form onSubmit={handleSubmit}>
+                        <VStack spacing={4}>
+                            <FormControl isRequired>
+                                <FormLabel>Username</FormLabel>
+                                <Input type="text" placeholder="Enter your username" onChange={(e) => { setUserName(e.target.value) }} />
+                            </FormControl>
 
-                        <FormControl isRequired>
-                            <FormLabel>Email ID</FormLabel>
-                            <Input type="email" placeholder="Enter your email ID" onChange={(e) => { setEmail(e.target.value) }} />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Email ID</FormLabel>
+                                <Input type="email" placeholder="Enter your email ID" onChange={(e) => { setEmail(e.target.value) }} />
+                            </FormControl>
 
-                        <FormControl isRequired>
-                            <FormLabel>Name of the File</FormLabel>
-                            <Input type="text" placeholder="Enter the file name" onChange={(e) => { setFileName(e.target.value) }} />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Name of the File</FormLabel>
+                                <Input type="text" placeholder="Enter the file name" onChange={(e) => { setFileName(e.target.value) }} />
+                            </FormControl>
 
-                        <FormControl isRequired>
-                            <FormLabel>Description of the File</FormLabel>
-                            <Textarea placeholder="Enter a description of the file" onChange={(e) => { setDescription(e.target.value) }} />
-                        </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Description of the File</FormLabel>
+                                <Textarea placeholder="Enter a description of the file" onChange={(e) => { setDescription(e.target.value) }} />
+                            </FormControl>
 
-                        <Button type="submit" colorScheme="blue" onClick={handleSubmit}>
-                            Submit
-                        </Button>
-                    </VStack>
-                </form>
+                            <Button type="submit" colorScheme="blue" onClick={handleSubmit}>
+                                Submit
+                            </Button>
+                        </VStack>
+                    </form>
+                </Box>
             </Box>
-        </ChakraProvider>
+        </ChakraProvider >
     );
 
 };

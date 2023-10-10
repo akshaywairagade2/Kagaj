@@ -100,7 +100,7 @@ const Login = () => {
         <>
             <Header />
             <Flex
-                minH={'100vh'}
+                minH={'80vh'}
                 align={'center'}
                 justify={'center'}
                 bg={useColorModeValue('gray.50', 'gray.800')}>
@@ -111,8 +111,11 @@ const Login = () => {
                     <Box
                         rounded={'lg'}
                         bg={useColorModeValue('white', 'gray.700')}
-                        boxShadow={'lg'}
-                        p={8}>
+                        // boxShadow={'lg'}
+                        border="1px solid"
+                        boxShadow="5px 10px 18px #888888"
+                        p={8}
+                    >
                         <Stack spacing={4}>
                             <FormControl id="email" isRequired>
                                 <FormLabel>Email address</FormLabel>

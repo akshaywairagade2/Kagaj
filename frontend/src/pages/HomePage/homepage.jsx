@@ -3,6 +3,7 @@ import Header from "../../Header/Header";
 
 import { useNavigate } from 'react-router-dom';
 import Footer from "../../Footer/footer";
+import Home from "./home";
 
 import {
     Stack,
@@ -22,8 +23,7 @@ const Homepage = () => {
     return (
         <>
             <Header />
-            <button onClick={() => { navigate("/login") }}>Login</button>
-            <button onClick={() => { navigate("/signup") }}>Signup</button>
+            <Home />
             <Footer />
         </>
     )

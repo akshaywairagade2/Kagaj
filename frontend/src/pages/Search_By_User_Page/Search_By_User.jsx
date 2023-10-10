@@ -1,4 +1,4 @@
-import react, { useState } from "react"
+import react, { useEffect, useState } from "react"
 import axios from "axios";
 import {
     TableContainer,
@@ -33,14 +33,19 @@ const SearchByUser = () => {
     const [search, setSearch] = useState("");
     const [total_done, setTotal_Done] = useState(false);
     const [total_reject, setTotal_Rejects] = useState(false);
-    const [data, setData] = useState([]);
     const [Issues, setIssues] = useState([]);
+    const [pending, setPending] = useState([]);
+    const [submitted, setSubmitted] = useState([]);
+    const [rejected, setRejected] = useState([]);
     const toast = useToast();
 
 
     const HandleSearch = (e) => {
         setSearch(e.target.value);
-        setIssues([])
+        setIssues([]);
+        setPending([]);
+        setSubmitted([]);
+        setRejected([]);
     };
 
 
@@ -52,7 +57,6 @@ const SearchByUser = () => {
         setTotal_Rejects(false);
         setTotal_Done(false);
         if (!search) {
-            setData(false)
             toast({
                 title: "Please Enter User Email id",
                 status: "warning",
@@ -94,7 +98,24 @@ const SearchByUser = () => {
 
     }
 
-    console.log(Issues, "Issues")
+
+    useEffect(() => {
+        if (Issues) {
+            for (let i = 0; i < Issues.length; i++) {
+                if (Issues[i].status == "pending") {
+                    setPending([...pending, Issues[i]]);
+                }
+                if (Issues[i].status == "Submitted") {
+                    setSubmitted([...submitted, Issues[i]]);
+                }
+                if (Issues[i].status == "Rejected") {
+                    setRejected([...rejected, Issues[i]]);
+                }
+            }
+        }
+    }, [Issues])
+
+
     return (
         <Box
             padding={10}
@@ -115,7 +136,7 @@ const SearchByUser = () => {
 
             </Box>
             {
-                Issues.length != [] ?
+                Issues.length ?
                     <Stack spacing={3}>
 
                         <Button onClick={(e) => { setTotal_Requests(!total_requests) }} bg={total_requests ? "gray.300" : null}>Total Pending</Button>
@@ -133,7 +154,7 @@ const SearchByUser = () => {
                                         </Tr>
                                     </Thead>
                                     <Tbody>{
-                                        Issues.map((issue, index) => (
+                                        pending.map((issue, index) => (
                                             (issue.status == "pending" ?
                                                 <Tr>
                                                     <Td>{index + 1}</Td>
@@ -171,7 +192,7 @@ const SearchByUser = () => {
                                     </Thead>
                                     <Tbody>
 
-                                        {Issues.map((issue, index) => (
+                                        {submitted.map((issue, index) => (
                                             (issue.status == "Submitted" ?
                                                 <Tr>
                                                     <Td>{index + 1}</Td>
@@ -211,7 +232,7 @@ const SearchByUser = () => {
                                     <Tbody>
 
 
-                                        {Issues.map((issue, index) => (
+                                        {rejected.map((issue, index) => (
                                             (
                                                 issue.status == "Rejected" ?
                                                     <Tr>
@@ -229,11 +250,8 @@ const SearchByUser = () => {
                                 </Table>
                             </TableContainer> : null
                         }
-
-
-
                     </Stack>
-                    : "No Result Found!"
+                    : <Box textAlign={"center"}> !No Result Found!</Box>
             }
 
 
