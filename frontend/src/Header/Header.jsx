@@ -21,13 +21,14 @@ import {
     Image
 } from '@chakra-ui/react'
 
-
+import ProfileModal from "./Profile/profilemodal"
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import logo from "../logo.svg"
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react';
 
 const Header = () => {
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [search, setSearch] = useState()
     const navigate = useNavigate()
@@ -36,7 +37,7 @@ const Header = () => {
     const user = userInfo ? userInfo.User : null
     const path = window.location.pathname;
 
-
+    const email = user?.emailId;
 
     const logoutHandler = () => {
         localStorage.removeItem("userInfo");
@@ -89,7 +90,7 @@ const Header = () => {
                             ) : null
                         }
                         {
-                            user ? (
+                            (user && email == "akshay@gmail.com") ? (
                                 <Box as="a" href={'/search_by_user'}
                                     _hover={{
                                         color: "white",
@@ -99,12 +100,12 @@ const Header = () => {
                                     color={path == "/search_by_user" ? "green" : null}
                                     padding={2}
                                 >
-                                    Search_By_Users
+                                    Search By Users
                                 </Box>
                             ) : null
                         }
                         {
-                            user ? (
+                            (user && email != "akshay@gmail.com") ? (
                                 <Box as="a" href={'/issue'}
                                     _hover={{
                                         color: "white",
@@ -149,11 +150,19 @@ const Header = () => {
                                         size="sm"
                                         cursor="pointer"
                                         name={user.firstName}
+                                        src={user.pic}
                                     />
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem size='sm' onClick={logoutHandler}>Logout</MenuItem>
+                                    <ProfileModal user={user}>
+                                        <MenuItem>My Profile</MenuItem>{" "}
+                                    </ProfileModal>
+                                    <MenuDivider />
+                                    <MenuItem onClick={logoutHandler}>Logout</MenuItem>
                                 </MenuList>
+                                {/* <MenuList>
+                                    <MenuItem size='sm' onClick={logoutHandler}>Logout</MenuItem>
+                                </MenuList> */}
                             </Menu> :
                             (
                                 path == '/login' || path == '/signup' ?

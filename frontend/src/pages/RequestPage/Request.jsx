@@ -1,6 +1,7 @@
 import react, { useEffect, useState } from "react"
 import axios from "axios";
 import {
+
     TableContainer,
     Box,
     Stack,
@@ -16,6 +17,7 @@ import {
     Button,
     Input,
     Link,
+    Text
 
 } from '@chakra-ui/react'
 import { useToast } from "@chakra-ui/react";
@@ -34,10 +36,17 @@ const Request = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [selectedid, setSelectedId] = useState(null);
-    const [count, setCount] = useState(0);
+    const [pending, setPending] = useState([]);
+    const [submitted, setSubmitted] = useState([]);
+    const [rejected, setRejected] = useState([]);
     const toast = useToast();
 
-
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const user = userInfo ? userInfo.User : null
+    const path = window.location.pathname;
+    const [flag, setFlag] = useState(true);
+    const email = user?.emailId;
+    const isAdmin = user?.isAdmin;
 
 
     const handleFileChange = (event, id) => {
@@ -108,7 +117,8 @@ const Request = () => {
                 },
                 config
             );
-            setCount(count + 1);
+
+            if (data) FetchAllRequets();
 
             toast({
                 title: "File Submitted Successful",
@@ -139,6 +149,9 @@ const Request = () => {
     }, [pdfUrl])
 
 
+
+
+
     const FetchAllRequets = async () => {
 
         try {
@@ -152,9 +165,15 @@ const Request = () => {
                 "http://localhost:5000/api/issue/getall",
                 config
             );
-            setCount(count + 1);
 
-            if (Data) setIssues(Data.data.Issue)
+            if (Data) {
+                setIssues(Data.data.Issue);
+                setFlag(true);
+                setPending([]);
+                setSubmitted([]);
+                setRejected([]);
+
+            }
             else setIssues([])
 
         } catch (error) {
@@ -172,8 +191,41 @@ const Request = () => {
 
 
     useEffect(() => {
+        if (Issues && flag) {
+
+            for (let i = 0; i < Issues.length; i++) {
+                if (Issues[i].status == "pending") {
+
+                    if (isAdmin)
+                        setPending(prevArray => [...prevArray, Issues[i]]);
+                    else if (Issues[i].emailId == email)
+                        setPending(prevArray => [...prevArray, Issues[i]]);
+                }
+
+                else if (Issues[i].status == "Submitted") {
+                    if (isAdmin)
+                        setSubmitted(prevArray => [...prevArray, Issues[i]]);
+                    else if (Issues[i].emailId == email)
+                        setSubmitted(prevArray => [...prevArray, Issues[i]]);
+                }
+
+                else if (Issues[i].status == "Rejected") {
+                    if (isAdmin)
+                        setRejected(prevArray => [...prevArray, Issues[i]]);
+                    else if (Issues[i].emailId == email)
+                        setRejected(prevArray => [...prevArray, Issues[i]]);
+                }
+
+            }
+            setFlag(false);
+        }
+    }, [Issues])
+
+
+
+    useEffect(() => {
         FetchAllRequets()
-    }, [count])
+    }, [])
 
     const RejectIssue = async (id) => {
         try {
@@ -190,7 +242,8 @@ const Request = () => {
                 },
                 config
             );
-            setCount(count + 1);
+            if (data)
+                FetchAllRequets();
             toast({
                 title: "File Rejected Successful",
                 status: "success",
@@ -212,9 +265,6 @@ const Request = () => {
 
         }
     }
-    console.log(Issues)
-
-
 
 
     return (
@@ -225,9 +275,7 @@ const Request = () => {
             overflowY={"auto"}
         >
             <Stack spacing={3}>
-
-
-                <Button onClick={(e) => { setTotal_Requests(!total_requests) }} bg={total_requests ? "gray.300" : null}>Total Requests</Button>
+                <Button onClick={(e) => { setTotal_Requests(!total_requests) }} bg={total_requests ? "gray.300" : null}>Total Pending</Button>
                 {total_requests ?
                     <TableContainer>
                         <Table variant='simple'>
@@ -238,22 +286,31 @@ const Request = () => {
                                     <Th>Email Id</Th>
                                     <Th>Name</Th>
                                     <Th>Document Requested</Th>
-                                    <Th>Upload</Th>
-                                    <Th>Submit</Th>
-                                    <Th>Reject</Th>
+                                    {isAdmin ?
+                                        <>
+                                            <Th>Upload</Th>
+                                            <Th>Submit</Th>
+                                            <Th>Reject</Th>
+                                        </> :
+                                        <Th>Status</Th>
+                                    }
                                 </Tr>
                             </Thead>
                             <Tbody>{
-                                Issues.map((issue, index) => (
-                                    (issue.status == "pending" ?
+                                pending.map((issue, index) => (
+                                    ((issue.status == "pending") ?
                                         <Tr>
                                             <Td>{index + 1}</Td>
                                             <Td>{issue.emailId}</Td>
                                             <Td>{issue.username}</Td>
                                             <Td>{issue.filename}</Td>
-                                            <Td><Input type="file" accept=".pdf" padding={2} width="60%" onChange={(e) => { handleFileChange(e, issue._id) }}></Input></Td>
-                                            <Td><Button onClick={handleUpload}>submit</Button></Td>
-                                            <Td><Button onClick={() => { RejectIssue(issue._id) }}>Reject</Button></Td>
+                                            {isAdmin ?
+                                                <>
+                                                    <Td><Input type="file" accept=".pdf" padding={2} width="60%" onChange={(e) => { handleFileChange(e, issue._id) }}></Input></Td>
+                                                    <Td><Button onClick={handleUpload}>submit</Button></Td>
+                                                    <Td><Button onClick={() => { RejectIssue(issue._id) }}>Reject</Button></Td></> :
+                                                <Td><Box backgroundColor={"yellow.200"} padding={2} borderRadius={4} w={"40%"}>Pending</Box></Td>
+                                            }
                                         </Tr> : null
                                     )
                                 ))
@@ -284,23 +341,24 @@ const Request = () => {
                             </Thead>
                             <Tbody>
 
-                                {Issues.map((issue, index) => (
-                                    (issue.status == "Submitted" ?
+                                {submitted.map((issue, index) => (
+                                    ((issue.status == "Submitted") ?
                                         <Tr>
                                             <Td>{index + 1}</Td>
                                             <Td>{issue.emailId}</Td>
                                             <Td>{issue.username}</Td>
                                             <Td>
-                                                <Link href={issue.link} isExternal>
-                                                    {issue.filename}
-                                                </Link>
+                                                <Text as='u' color='blue'>
+                                                    <Link href={issue.link} isExternal>
+                                                        {issue.filename}
+                                                    </Link>
+                                                </Text>
+
                                             </Td>
                                             <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"40%"}>Submitted</Box></Td>
                                         </Tr> : null
                                     )
                                 ))}
-
-
                             </Tbody>
 
                         </Table>
@@ -324,15 +382,15 @@ const Request = () => {
                             <Tbody>
 
 
-                                {Issues.map((issue, index) => (
+                                {rejected.map((issue, index) => (
                                     (
-                                        issue.status == "Rejected" ?
+                                        (issue.status == "Rejected") ?
                                             <Tr>
                                                 <Td>{index + 1}</Td>
                                                 <Td>{issue.emailId}</Td>
                                                 <Td>{issue.username}</Td>
                                                 <Td>{issue.filename}</Td>
-                                                <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
+                                                <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"40%"}>Rejected</Box></Td>
                                             </Tr> : null
                                     )
                                 ))}

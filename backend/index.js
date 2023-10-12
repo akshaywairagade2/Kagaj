@@ -6,9 +6,11 @@ var cors = require('cors');
 const authRoutes = require('./routes/auth')
 const issueRoutes = require('./routes/issue')
 
+
 env.config();
 app.use(cors());
-
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: false }))
 mongoose.connect(
     `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@cluster0.jy0uzsn.mongodb.net/${process.env.MONGO_DB_DATABASE}?retryWrites=true&w=majority`,
     {

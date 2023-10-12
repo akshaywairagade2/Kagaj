@@ -2,7 +2,7 @@ import react, { useEffect } from "react"
 import Header from "../../Header/Header";
 import Footer from "../../Footer/footer";
 import Issue from "./Issue";
-
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Box,
@@ -29,6 +29,17 @@ import {
 } from '@chakra-ui/react'
 
 const IssuePage = () => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const user = userInfo ? userInfo.User : null
+    const path = window.location.pathname;
+    const email = user?.emailId;
+    const isAdmin = user?.isAdmin;
+    const navigate = useNavigate();
+
+
+    useEffect(() => {
+        if (isAdmin) navigate('/')
+    })
 
     return (
         <div style={{ width: "100%" }}>

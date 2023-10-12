@@ -15,11 +15,13 @@ const Issue = () => {
     const [description, setDescription] = useState("");
     const navigate = useNavigate();
     const toast = useToast();
-
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const user = userInfo ? userInfo.User : null
+    const path = window.location.pathname;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!username || !email || !filename || !description) {
+        if (!filename || !description) {
             toast({
                 title: "Please Fill all the fields",
                 status: "warning",
@@ -41,8 +43,8 @@ const Issue = () => {
             const data = await axios.post(
                 "http://localhost:5000/api/issue/createissue",
                 {
-                    "username": username,
-                    "emailId": email,
+                    "username": user?.firstName + " " + user?.lastName,
+                    "emailId": user?.emailId,
                     "filename": filename,
                     "description": description,
                     "status": "pending",
@@ -94,7 +96,7 @@ const Issue = () => {
                 >
                     <form onSubmit={handleSubmit}>
                         <VStack spacing={4}>
-                            <FormControl isRequired>
+                            {/* <FormControl isRequired>
                                 <FormLabel>Username</FormLabel>
                                 <Input type="text" placeholder="Enter your username" onChange={(e) => { setUserName(e.target.value) }} />
                             </FormControl>
@@ -102,7 +104,7 @@ const Issue = () => {
                             <FormControl isRequired>
                                 <FormLabel>Email ID</FormLabel>
                                 <Input type="email" placeholder="Enter your email ID" onChange={(e) => { setEmail(e.target.value) }} />
-                            </FormControl>
+                            </FormControl> */}
 
                             <FormControl isRequired>
                                 <FormLabel>Name of the File</FormLabel>

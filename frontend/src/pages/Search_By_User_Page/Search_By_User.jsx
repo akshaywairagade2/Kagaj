@@ -18,13 +18,13 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightAddon,
-    Link
-
+    Link,
+    Text
 
 } from '@chakra-ui/react'
 import { useToast } from "@chakra-ui/react";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
-
+import { useNavigate } from 'react-router-dom';
 
 
 const SearchByUser = () => {
@@ -37,6 +37,13 @@ const SearchByUser = () => {
     const [pending, setPending] = useState([]);
     const [submitted, setSubmitted] = useState([]);
     const [rejected, setRejected] = useState([]);
+    const [flag, setFlag] = useState(true);
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const user = userInfo ? userInfo.User : null
+    const path = window.location.pathname;
+    const email = user?.emailId;
+    const isAdmin = user?.isAdmin;
+    const navigate = useNavigate();
     const toast = useToast();
 
 
@@ -53,7 +60,7 @@ const SearchByUser = () => {
     const SearchUser = async (e) => {
 
         e.preventDefault();
-
+        setTotal_Requests(false)
         setTotal_Rejects(false);
         setTotal_Done(false);
         if (!search) {
@@ -73,14 +80,23 @@ const SearchByUser = () => {
                     },
                 };
 
+
+
                 const Data = await axios.post(
                     "http://localhost:5000/api/issue/getallbyemail", {
                     emailid: search
                 },
                     config
                 );
+                if (Data) {
+                    setIssues(Data.data.Issue);
+                    setFlag(true);
+                    setPending([]);
+                    setSubmitted([]);
+                    setRejected([]);
 
-                if (Data) setIssues(Data.data.Issue)
+
+                }
                 else setIssues([])
 
             } catch (error) {
@@ -100,18 +116,19 @@ const SearchByUser = () => {
 
 
     useEffect(() => {
-        if (Issues) {
+        if (Issues && flag) {
             for (let i = 0; i < Issues.length; i++) {
                 if (Issues[i].status == "pending") {
-                    setPending([...pending, Issues[i]]);
+                    setPending(prevArray => [...prevArray, Issues[i]]);
                 }
-                if (Issues[i].status == "Submitted") {
-                    setSubmitted([...submitted, Issues[i]]);
+                else if (Issues[i].status == "Submitted") {
+                    setSubmitted(prevArray => [...prevArray, Issues[i]]);
                 }
-                if (Issues[i].status == "Rejected") {
-                    setRejected([...rejected, Issues[i]]);
+                else if (Issues[i].status == "Rejected") {
+                    setRejected(prevArray => [...prevArray, Issues[i]]);
                 }
             }
+            setFlag(false);
         }
     }, [Issues])
 
@@ -199,9 +216,11 @@ const SearchByUser = () => {
                                                     <Td>{issue.emailId}</Td>
                                                     <Td>{issue.username}</Td>
                                                     <Td>
-                                                        <Link href={issue.link} isExternal>
-                                                            {issue.filename}
-                                                        </Link>
+                                                        <Text as='u' color='blue'>
+                                                            <Link href={issue.link} isExternal>
+                                                                {issue.filename}
+                                                            </Link>
+                                                        </Text>
                                                     </Td>
                                                     <Td><Box backgroundColor={"green.200"} padding={2} borderRadius={4} w={"40%"}>Submitted</Box></Td>
                                                 </Tr> : null
@@ -231,7 +250,6 @@ const SearchByUser = () => {
                                     </Thead>
                                     <Tbody>
 
-
                                         {rejected.map((issue, index) => (
                                             (
                                                 issue.status == "Rejected" ?
@@ -240,7 +258,7 @@ const SearchByUser = () => {
                                                         <Td>{issue.emailId}</Td>
                                                         <Td>{issue.username}</Td>
                                                         <Td>{issue.filename}</Td>
-                                                        <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"35%"}>Rejected</Box></Td>
+                                                        <Td><Box backgroundColor={"red.200"} padding={2} borderRadius={4} width={"40%"}>Rejected</Box></Td>
                                                     </Tr> : null
                                             )
                                         ))}
